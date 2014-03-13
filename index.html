@@ -1,0 +1,314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<!-- <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.js"></script> -->
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<link href="css/custom-theme/jquery-ui-1.9.2.custom.css" rel="stylesheet">
+<script src="js/jquery-1.8.3.js"></script>
+<script src="js/jquery-ui-1.9.2.custom.js"></script>
+
+<style>
+body{
+	font: 100.0% "Trebuchet MS", sans-serif;
+	/* margin: 50px; */
+}
+
+#radio{
+	font: 50.0% "Trebuchet MS", sans-serif;
+}
+	
+path.link {
+  fill: none;
+  /*stroke-width: 2.5px;*/
+}
+
+marker#licensing {
+  fill: green;
+}
+
+path.link.licensing {
+  stroke: green;
+}
+
+path.link.resolved {
+  stroke-dasharray: 0,2 1;
+}
+
+circle {
+  /*fill: #ccc;*/
+  /*stroke: #333;*/
+  stroke-width: 1.5px;
+}
+
+text {
+  font: 10px sans-serif;
+  pointer-events: none;
+}
+
+text.shadow {
+  stroke: #fff;
+  stroke-width: 3px;
+  stroke-opacity: .8;
+}
+
+
+#content {
+	position: absolute;
+}
+
+#stats {
+	position: absolute;
+}
+
+#info {
+	position: absolute;
+}
+
+#error {
+	position: absolute;
+}
+
+.my_button {
+	position: absolute;
+}
+
+.ui-slider .ui-slider-handle {
+
+    cursor: default;
+    height: 0.6em;
+    position: absolute;
+    width: 0.8em;
+    z-index: 2;
+}
+
+#tools {
+	position: absolute;
+}
+
+#icons {
+	margin: 0;
+	padding: 0;
+}
+#icons li {
+	margin: 2px;
+	position: relative;
+	padding: 4px 0;
+	cursor: pointer;
+	float: left;
+	list-style: none;
+}
+#icons span.ui-icon {
+	/* float: left; */
+	/* margin: 0 0px; */
+}
+
+.my_jq_button {
+	width: 35;
+	height: 20;
+	padding: 0;
+}
+
+.dumlabel {
+	padding: 0;
+	margin: 0;
+}
+
+</style>
+
+
+<title>Lattice Visualization</title>
+</head>
+<body>
+	
+	<div id="vis"></div>
+	
+	<div id="content">contents here</div>
+	<div id="stats"></div>
+	<div id="info">
+		<span id="infotext"></span>
+	</div>
+	<div id="error">
+		<div class="ui-widget">
+		<div class="ui-state-highlight ui-corner-all" style="margin-top: 20px; padding: 0 .7em;">
+			<p><span class="ui-icon ui-icon-info" style="float: left; margin-right: .3em;"></span>
+			<span id="errortext"></span>
+			</p>
+		</div>
+		</div>
+	</div>
+	
+	
+	<div id="tools">
+		<ul id="icons" class="ui-widget ui-helper-clearfix">
+			<!-- <li class="ui-state-default ui-corner-all" title=".ui-icon-circle-triangle-w"><span class="ui-icon ui-icon-circle-triangle-w"></span></li> -->
+			<button class="my_jq_button"  id="back_button" onclick="goBackHistory()"></button>
+			<br>
+			<input type="checkbox" class="my_jq_button" id="edit_button" onclick="setMode()"><label for="edit_button" class="dumlabel"></label>
+			<br>
+			<!-- <button class="my_jq_button" id="add_button"></button>
+			<br> -->
+			<button class="my_jq_button" id="remove_button" onclick="removeNode()"></button>
+			<br>
+			<button class="my_jq_button" id="merge_button" onclick="mergeNodeOrEdge()"></button>
+			<br>
+			<button class="my_jq_button" id="sep_button" onclick="separateEdge()"></button>
+		</ul>
+		<div id="slider" class="my_slider"></div>
+		
+		<div id="radio">
+	      <input type="radio" id="data0" name="project" value="0" checked="checked">
+	      <label for="data0">sample lattice</label>
+	 
+	      <input type="radio" id="data1" name="project" value="1">
+	      <label for="data1">protein lattice</label>
+	 
+    	</div>
+	</div>
+	
+	
+	<!-- <button class = "my_button" id="orig_back_button" onclick="goBackHistory()">Back</button>
+	<button class = "my_button" id="mode_button" onclick="setMode()">Mode</button>
+	
+	<button class = "my_button" id="orig_sep_button" onclick="separateEdge()">Separate</button>
+	<button class = "my_button" id="orig_merge_button" onclick="mergeEdge()">Merge</button>
+	
+	
+	<button class = "my_button" id="add_node_button" onclick="addNode()">Add Node</button>
+	<button class = "my_button" id="remove_node_button" onclick="removeNode()">Remove Node</button>
+	
+	<button class = "my_button" id="merge_node_button" onclick="mergeNode()">Merge Node</button> -->
+	
+	<script type="text/javascript">
+	
+		$(function() {
+			$( "#slider" ).slider({
+				orientation: "vertical",
+				change: function( event, ui ) {
+					radius = 100 + $("#slider").slider("option", "value") * 2;
+					refresh();
+				},
+				animate: "fast"
+			});
+			
+			$( "#dialog-link, #icons li" ).hover(
+					function() {
+						$( this ).addClass( "ui-state-hover" );
+					},
+					function() {
+						$( this ).removeClass( "ui-state-hover" );
+					}
+				);
+			
+			
+			
+			$( "#back_button" ).button({ icons: { primary: "ui-icon-circle-triangle-w"} });
+			$( "#edit_button" ).button({ icons: { primary: "ui-icon-wrench"}, text: false});
+			//$( "#add_button" ).button({ icons: { primary: "ui-icon-plusthick"} });
+			$( "#remove_button" ).button({ icons: { primary: "ui-icon-cancel"}, disabled: true});
+			$( "#merge_button" ).button({ icons: { primary: "ui-icon-refresh"}, disabled: true});
+			$( "#sep_button" ).button({ icons: { primary: "ui-icon-transferthick-e-w"}, disabled: true});
+			$("#radio").buttonset();
+			
+			$("#content").draggable();
+			$("#stats").draggable();
+		});
+		
+		
+	
+		TOTAL_HEIGHT = $(window).height();
+		TOTAL_WIDTH = $(window).width();
+		
+		$("#slider").width(5);
+		$("#slider").height(60);
+		$("#slider").offset({top: $("#sep_button").offset().top + 30, left: 18});
+		
+		$("#tools").offset({top: TOTAL_HEIGHT * 0.03, left: TOTAL_WIDTH * 0.02});
+
+		$(".my_jq_button").width(35);
+		$(".my_jq_button").height(20);
+		
+		
+		$("#content").offset({top: TOTAL_HEIGHT * 0.2, left: TOTAL_WIDTH * 0.75});
+		$("#stats").offset({top: TOTAL_HEIGHT * 0.5, left: TOTAL_WIDTH * 0.75});
+		$("#info").offset({top: $("#slider").offset().top + 80, left: TOTAL_WIDTH * 0.02});
+		$("#error").offset({top: TOTAL_HEIGHT * 0.02, left: TOTAL_WIDTH * 0.3});
+		$("#error").css("visibility", "hidden");
+		$("#info").css("vsisibility", "hidden");
+		$("#info").width(150);
+		
+		$("#radio").offset({top: TOTAL_HEIGHT * 0.95, left: TOTAL_WIDTH * 0.02});
+		
+		//$("#orig_back_button").offset({top: TOTAL_HEIGHT * 0.1, left: TOTAL_WIDTH * 0.9});
+		//$("#mode_button").offset({top: TOTAL_HEIGHT * 0.2, left: TOTAL_WIDTH * 0.9});
+		//$("#orig_sep_button").offset({top: TOTAL_HEIGHT * 0.3, left: TOTAL_WIDTH * 0.9});
+		//$("#orig_merge_button").offset({top: TOTAL_HEIGHT * 0.4, left: TOTAL_WIDTH * 0.9});
+		
+		//$("#add_node_button").offset({top: TOTAL_HEIGHT * 0.5, left: TOTAL_WIDTH * 0.9});
+		//$("#remove_node_button").offset({top: TOTAL_HEIGHT * 0.6, left: TOTAL_WIDTH * 0.9});
+		//$("#merge_node_button").offset({top: TOTAL_HEIGHT * 0.7, left: TOTAL_WIDTH * 0.9});
+		
+		$("#back_button").mouseover(function(){
+			infoMessage("undo last operation");
+		});
+		$("#back_button").mouseout(function(){
+			infoMessageClear();
+		});
+		
+		$("#edit_button").mouseover(function(){
+			alert("asd");
+			infoMessage("toggle explore/edit mode");
+		});
+		$("#edit_button").mouseout(function(){
+			infoMessageClear();
+		});
+		
+		$("#remove_button").mouseover(function(){
+			infoMessage("remove node");
+		});
+		$("#remove_button").mouseout(function(){
+			infoMessageClear();
+		});
+		
+		
+		$("#merge_button").mouseover(function(){
+			infoMessage("merge multiple edges/nodes");
+		});
+		$("#merge_button").mouseout(function(){
+			infoMessageClear();
+		});
+		
+		
+		$("#sep_button").mouseover(function(){
+			infoMessage("separate into multiple edges");
+		});
+		$("#sep_button").mouseout(function(){
+			infoMessageClear();
+		});
+		
+		$("#slider").mouseover(function(){
+			infoMessage("change curvature");
+		});
+		$("#slider").mouseout(function(){
+			infoMessageClear();
+		});
+		
+		
+		$("#radio").change(function(){
+			var v = $('input[name=project]:checked', '#radio').val();
+			loadPage(v);
+		});
+		
+	</script>
+	
+	<script type="text/javascript" src="main.js"></script>
+	
+	<script type="text/javascript">
+		//toolBoxSetup();
+		readData("data/simple.fst");
+	</script>	
+	
+	
+</body>
+</html>

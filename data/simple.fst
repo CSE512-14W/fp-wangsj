@@ -1,0 +1,10 @@
+start,end,content,path
+0,1,i,[0;1;2]
+0,4,hello,[3]
+1,2,have,[0;1]
+1,3,hate,[2]
+2,3,a,[0]
+2,3,an,[1]
+3,4,dream,[0]
+3,4,apple,[1;2]
+4,4,[END],[-1]
