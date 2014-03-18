@@ -30,9 +30,15 @@ This project is done individually.
 ## Development Process
 
 1) We start developing our system by researching previous works on graph visualization.
+
 2) Then, we design the layout of lattice structure using force-directed layout with visual encodings for specific features of lattice.
+
 3) We implement the interactions for the exploration mode.
+
 4) We refine step 2) and 3).
+
 5) We start designing about the structure change operations, so that user can change lattice structure with the greatest freedom.
+
 6) We design the interface for users to use those operations.
+
 7) We implement interactions for the editing mode, and refine step 5) and 6).
