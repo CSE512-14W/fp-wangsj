@@ -435,10 +435,19 @@ function resetToModeOne() {
 	if(edit_node != null) {
 		edit_node.edit = false;
 		edit_circle.attr("fill", "#ccc");
+		edit_node = null;
+		edit_circle = null;
 	}
+	
+	if(edit_node2 != null) edit_node2.edite = false;
+	if(edit_circle2 != null) edit_circle2.attr("fill", "#ccc");
+	edit_node2 = null;
+	edit_circle2 = null;
+	
 	for(var i=0; i<edit_path.length; i++) {
 		edit_path[i].edit = false;
 	}
+	edit_path = [];
 	
 	resetColor();
 }
@@ -519,12 +528,17 @@ var edit_node2 = null;
 var edit_circle2 = null;
 
 function separateEdge() {
+	var t1 = +new Date();
+	
 	for(var i=0; i<edit_path.length; i++) {
 		separateOneEdge(edit_path[i]);
 		edit_path[i].edit = false;
 	}
 	
 	edit_path = [];
+	
+	var t2 = +new Date();
+	console.log(t2 - t1);
 }
 
 
@@ -599,6 +613,8 @@ function disEdit(wrong) {
 
 function mergeEdge() {
 
+	var t1 = +new Date();
+	
 	if(edit_path.length <= 1) {
 		disEdit(true);
 		return;
@@ -623,6 +639,9 @@ function mergeEdge() {
 	}
 //	console.log(wrong);
 	disEdit(wrong);
+	
+	var t2 = +new Date();
+	console.log(t2 - t1);
 	
 }
 
@@ -709,6 +728,9 @@ function addNodeHistory(n, ln1, ln2) {
 
 
 function addNodeDragEnd() {
+	
+	var t1 = +new Date();
+	
 	var ln = [];
 	var s = add_node_path.source;
 	var t = add_node_path.target;
@@ -725,6 +747,9 @@ function addNodeDragEnd() {
 	addNodeHistory(n, ln1, ln2);
 	
 	refresh();
+	
+	var t2 = +new Date();
+	console.log(t2 - t1);
 }
 
 
@@ -819,6 +844,10 @@ function directParent(n1, n2) {
 
 
 function mergeNode() {
+	
+	
+	var t1 = +new Date();
+	
 	if(edit_node == null || edit_node2 == null) {
 		toolBoxClear();
 		return;
@@ -892,11 +921,18 @@ function mergeNode() {
 	edit_circle2.attr("fill", "#ccc");
 	edit_circle2 = null;
 	
+	
+	var t2 = +new Date();
+	console.log(t2 - t1);
+	
 }
 
 
 
 function removeNode() {
+	
+	var t1 = +new Date();
+	
 	var in_edge = [];
 	var out_edge = [];
 	var links_n = [];
@@ -947,6 +983,9 @@ function removeNode() {
 	historyRemoveNode(links_n, nodes_n);
 	
 	refresh();
+	
+	var t2 = +new Date();
+	console.log(t2 - t1);
 }
 
 
