@@ -30,12 +30,20 @@
         <div class="caption">Screen shot of our system visualizing a word lattice</div>
       </div>
 
+      <p>
+        Lattice is a special form of graph with a start node and a terminal node, and data are encoded on the paths from the start to the terminal. The key feature of lattice is common edges, which are the edges shared by multiple data-encoding paths. Lattice is widely used in the fields of speech recognition, natural language processing and bioinformatics, as common edges can be applied to compress data, to speed-up algorithms, and to discover common structures within the data. In this paper, we focus on visualization of the lattice structure, with emphasis on the common edges. In particular, we aim to build a system, which takes any lattice as input, displays the lattice structure effectively, and supports various interactions for users to either explore or edit the lattice. With such system, we wish to gain some intuition about how to build the optimal lattice from raw data, which is still an unsolved problem.
+      </p>
+
       
       <h2>Software</h2>
       <p>
         Try it online <a href="http://cse512-14w.github.io/fp-wangsj/vis.html">here</a>. 
         <p>
           <h3>Short Notes about using our System</h3>
+          <div>The first button in the tool box (on top left) is an undo button. </div>
+          <div>The second button in the tool box is a toggle button to change between the exploration mode and editing mode.</div>
+          <div>In editing mode (when the second button is in white), you can select nodes and edges and use the rest of the tool box to change the lattice structure. 
+          One operation can be done without the buttons, which is insertion of new nodes. User can insert new nodes by dragging mouse around an existing edge, and helper information will be shown in the content box in the top right.</div>
         </p>
       </p>
 
