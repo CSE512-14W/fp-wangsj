@@ -16,8 +16,16 @@ Lattice is a special form of graph with a start node and a terminal node, and da
 
 ## Running Instructions
 
-This project is web based. Access our visualization at http://cse512-14w.github.io/fp-wangsj/ or download this repository and run `python -m SimpleHTTPServer 9000` and access this from http://localhost:9000/.
+This project is web based. Access our visualization at http://cse512-14w.github.io/fp-wangsj/vis.html or download this repository and run `python -m SimpleHTTPServer 9000` and access this from http://localhost:9000/.
 
 
 ## Short Notes about Using our System
 The first button in the tool box (on top left) is an undo button. The second button in the tool box is a toggle button to change between the exploration mode and editing mode.
+
+## Work Breakdown
+
+This project is done individually.
+
+
+## Development Process
+
